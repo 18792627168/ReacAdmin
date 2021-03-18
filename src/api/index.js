@@ -5,7 +5,9 @@
 */
 
 import ajax from './ajax'
-const BASE = ''
+// const BASE = 'http://localhost:5000'
+// const BASE = ''
+const BASE = 'http://120.55.193.14:5000';
 
 export const regLogin = (username, password) => ajax(BASE+'/login',{username,password}, 'POST');
 
