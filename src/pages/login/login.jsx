@@ -1,9 +1,10 @@
 import React, { Component } from 'react'
-import { Form, Input, Button } from 'antd'
+import { Form, Input, Button, message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import './login.less'
 import logo from './images/logo.png'
 import {regLogin} from '../../api'
+import memoryUtils from '../../utils/memoryUtils'
 
 // 登录的路由组件
 export default class Login extends Component{
@@ -13,6 +14,19 @@ export default class Login extends Component{
     try{
       const res = await regLogin(username, password);
       console.log("res",res);
+      const result = res.data;
+      if(res.status == 0){  // 登录成功
+        message.success('登录成功');
+        const user = res.data
+        memoryUtils.user = user      // 保存在内存中
+
+        // 跳转到管理页面(不需要再回退到登录)   这个事在事件回调内的写法
+        // 如果需要回退操作，那就需要push进行跳转   
+        this.props.history.replace('/');
+
+      }else{     //登录失败
+        message.error(result.msg);
+      }
     }catch(err){
       console.log("err",err);
     }
@@ -64,7 +78,7 @@ export default class Login extends Component{
               name="password"
               rules={[
                 { validator: this.validatePwd }
-              ]}
+              ]} 
             >
               <Input
                 prefix={<LockOutlined className="site-form-item-icon" style={{opacity:'0.5'}}/>}
