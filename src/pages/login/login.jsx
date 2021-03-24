@@ -1,10 +1,12 @@
 import React, { Component } from 'react'
+import {Redirect} from 'react-router-dom'
 import { Form, Input, Button, message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import './login.less'
 import logo from './images/logo.png'
 import {regLogin} from '../../api'
 import memoryUtils from '../../utils/memoryUtils'
+import storageUtils from '../../utils/storageUtils'
 
 // 登录的路由组件
 export default class Login extends Component{
@@ -15,10 +17,12 @@ export default class Login extends Component{
       const res = await regLogin(username, password);
       console.log("res",res);
       const result = res.data;
-      if(res.status == 0){  // 登录成功
+      if(res.status === 0){  // 登录成功
         message.success('登录成功');
         const user = res.data
+        console.log("11111111",user)
         memoryUtils.user = user      // 保存在内存中
+        storageUtils.saveUser(user)   // 保存到本地数据中
 
         // 跳转到管理页面(不需要再回退到登录)   这个事在事件回调内的写法
         // 如果需要回退操作，那就需要push进行跳转   
@@ -47,6 +51,11 @@ export default class Login extends Component{
     }
   }
   render(){
+    // 如果用户已经登录，自动跳转到管理界面
+    const user = memoryUtils.user
+    if(user && user._id){
+      return <Redirect to="/"/>
+    }
     return (
       <div className="login">
         <header className="login-header">
