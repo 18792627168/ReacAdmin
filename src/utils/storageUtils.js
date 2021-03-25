@@ -1,13 +1,9 @@
+import store from 'store'
 /*
     进行local数据存储管理的工具模块
 */
-
-import store from 'store'
-
-const USER_KEY = 'user_key';
-
+const USER_KEY = 'user_key'
 export default {
-
     // 保存user
     saveUser(user){
         // localStorage.setItem(USER_KEY, JSON.stringify(user));

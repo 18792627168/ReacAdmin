@@ -3,7 +3,7 @@ import {Redirect} from 'react-router-dom'
 import { Form, Input, Button, message } from 'antd'
 import { UserOutlined, LockOutlined } from '@ant-design/icons'
 import './login.less'
-import logo from './images/logo.png'
+import logo from '../../assets/images/logo.png'
 import {regLogin} from '../../api'
 import memoryUtils from '../../utils/memoryUtils'
 import storageUtils from '../../utils/storageUtils'
@@ -20,7 +20,7 @@ export default class Login extends Component{
       if(res.status === 0){  // 登录成功
         message.success('登录成功');
         const user = res.data
-        console.log("11111111",user)
+        // console.log("11111111",user)
         memoryUtils.user = user      // 保存在内存中
         storageUtils.saveUser(user)   // 保存到本地数据中
 
