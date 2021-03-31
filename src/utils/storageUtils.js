@@ -2,7 +2,8 @@ import store from 'store'
 /*
     进行local数据存储管理的工具模块
 */
-const USER_KEY = 'user_key'
+const USER_KEY = 'user_key';
+// eslint-disable-next-line
 export default {
     // 保存user
     saveUser(user){
