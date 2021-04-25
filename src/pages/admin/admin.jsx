@@ -16,7 +16,7 @@ import Line from '../charts/line'
 import Pie from '../charts/pie'
 
 
-const { Footer, Sider, Content } = Layout
+const { Footer, Sider, Content } = Layout  
 
 // 后台管理的路由组件
 export default class Admin extends Component{
