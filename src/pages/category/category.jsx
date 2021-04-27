@@ -4,7 +4,8 @@ import {
   Table,
   Button,
   Space,
-  message
+  message,
+  Modal
 } from 'antd'
 import { PlusOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import LinkButton from '../../components/link-button';
@@ -18,6 +19,7 @@ export default class Category extends Component {
     subCategorys: [],  // 二级分类
     parentId: '0',  // 当前需要显示的分类列表的parentId
     parentName: '',  // 需要显示的父类名称
+    showStatus: 0,   // 标识添加/更新的确认框 0 都不显示 1：添加 2：更新
   }
   // 初始化数组列名
   initColumns = () => {
@@ -31,7 +33,7 @@ export default class Category extends Component {
         width: 300,
         render: (text, record) => (
           <Space size="middle">
-            <LinkButton>修改分类</LinkButton>
+            <LinkButton onClick={this.showUpdate}>修改分类</LinkButton>
             {/* 向事件回调函数传递参数，先定义一个匿名函数，在函数调用处理的函数并传入数据 */}
             {this.state.parentId==='0' ? <LinkButton onClick={() => this.showSubCategorys(record)}>查看子分类</LinkButton> : null}
           </Space>
@@ -82,7 +84,32 @@ export default class Category extends Component {
       subCategorys: []
     })
   }
+  // 响应点击取消:隐藏确定框
+  handleCancel = () => {
+    this.setState({
+      showStatus: 0
+    })
+  }
+  // 显示添加
+  showAdd = () => {
+    this.setState({
+      showStatus: 1
+    })
+  }
+  // 显示修改确认框
+  showUpdate = () => {
+    this.setState({
+      showStatus: 2
+    })
+  }
+  // 添加分类
+  addCategory =() => {
 
+  }
+  // 更新分类
+  updateCategory = () => {
+
+  }
   // 执行异步任务：发送请求
   componentDidMount(){
     this.initColumns()
@@ -90,7 +117,7 @@ export default class Category extends Component {
   }
   render(){
     // 读取状态数据
-    const { categorys, subCategorys, parentId, parentName, loading } = this.state;
+    const { categorys, subCategorys, parentId, parentName, loading, showStatus } = this.state;
     // card的标题及展示
     const title = parentId === '0' ? '一级分类列表' : (
       <span>
@@ -100,9 +127,9 @@ export default class Category extends Component {
       </span>
     )
     const extra = (
-      <Button type="primary">
+      <Button type="primary" onClick={this.showAdd}>
         <PlusOutlined />
-        添加文本
+        添加
       </Button>
     );
 
@@ -116,6 +143,24 @@ export default class Category extends Component {
           rowKey="_id"
           pagination={{defaultPageSize:5}}
         ></Table>
+
+
+      <Modal 
+        title="添加分类" 
+        visible={showStatus === 1} 
+        onOk={this.addCategory} 
+        onCancel={this.handleCancel}>
+        <p>添加界面</p>
+      </Modal>
+
+      <Modal 
+      title="更新分类" 
+      visible={showStatus === 2} 
+      onOk={this.updateCategory} 
+      onCancel={this.handleCancel}>
+        <p>更新界面</p>
+      </Modal>
+
       </Card>
     )
   }
