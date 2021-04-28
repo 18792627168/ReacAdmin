@@ -10,13 +10,13 @@ import Home from '../home/home'
 import Category from '../category/category'
 import Product from '../product/product'
 import Role from '../role/role'
-import User from '../user/user'
+import User from '../user/user' 
 import Bar from '../charts/bar'
 import Line from '../charts/line'
 import Pie from '../charts/pie'
 
 
-const { Footer, Sider, Content } = Layout
+const { Footer, Sider, Content } = Layout  
 
 // 后台管理的路由组件
 export default class Admin extends Component{
