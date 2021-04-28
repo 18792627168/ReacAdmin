@@ -1,10 +1,11 @@
-import React, {Component} from 'react'
+import React, { Component } from 'react'
 import {
   Card,
   Table,
   Button,
   Space,
-  message
+  message,
+  Modal
 } from 'antd'
 import { PlusOutlined, ArrowRightOutlined } from '@ant-design/icons';
 import LinkButton from '../../components/link-button';
@@ -18,6 +19,7 @@ export default class Category extends Component {
     subCategorys: [],  // 二级分类
     parentId: '0',  // 当前需要显示的分类列表的parentId
     parentName: '',  // 需要显示的父类名称
+    showState: 0,    // 标识添加/更新的确认框是否显示 0 都不展示 1添加 2更新
   }
   // 初始化数组列名
   initColumns = () => {
@@ -33,7 +35,7 @@ export default class Category extends Component {
           <Space size="middle">
             <LinkButton>修改分类</LinkButton>
             {/* 向事件回调函数传递参数，先定义一个匿名函数，在函数调用处理的函数并传入数据 */}
-            {this.state.parentId==='0' ? <LinkButton onClick={() => this.showSubCategorys(record)}>查看子分类</LinkButton> : null}
+            {this.state.parentId === '0' ? <LinkButton onClick={() => this.showSubCategorys(record)}>查看子分类</LinkButton> : null}
           </Space>
         ),
       },
@@ -42,55 +44,70 @@ export default class Category extends Component {
   // 发送请求 一/二级分类
   getCategorys = async (parentId) => {
     // 在发请求前显示loading
-    this.setState({loading:true});
+    this.setState({ loading: true });
     parentId = parentId || this.state.parentId
     const result = await reqCategorys(parentId);
-    this.setState({loading:false});
-    if(result.status === 0){
+    this.setState({ loading: false });
+    if (result.status === 0) {
       const categorys = result.data;
-      if(parentId === '0'){
+      if (parentId === '0') {
         this.setState({
           categorys
         })
-      }else{
+      } else {
         this.setState({
           subCategorys: categorys
         })
       }
-    }else{
+    } else {
       message.error("获取分类列表失败！")
     }
   }
   // 显示指定一级分类对象的二级分类列表
   showSubCategorys = (record) => {
-    console.log("record",record)
+    console.log("record", record)
     // this.setState 是异步操作
     this.setState({
       parentId: record._id,
       parentName: record.name
     }, () => {
-      console.log("this.state.parentId",this.state.parentId)
+      console.log("this.state.parentId", this.state.parentId)
       this.getCategorys();
-    }) 
+    })
   }
 
   // 显示指定一级分类列表
   showCategorys = () => {
     this.setState({
       parentId: '0',
-      parentName:'',
+      parentName: '',
       subCategorys: []
     })
   }
+  // 响应模态框点击取消：隐藏模态框
+  handleCancel = () => {
+    this.setState({
+      showState: 0
+    })
+  }
+  // 添加分类
+  addCategory = () => {
+
+  }
+
+  // 更新分类
+  updateCategory = () => {
+
+  }
 
   // 执行异步任务：发送请求
-  componentDidMount(){
+  componentDidMount() {
     this.initColumns()
     this.getCategorys()
   }
-  render(){
+  render() {
     // 读取状态数据
-    const { categorys, subCategorys, parentId, parentName, loading } = this.state;
+    const { categorys, subCategorys, parentId, parentName, loading, showState } = this.state;
     // card的标题及展示
     const title = parentId === '0' ? '一级分类列表' : (
       <span>
@@ -106,16 +123,30 @@ export default class Category extends Component {
       </Button>
     );
 
-    
-    return(
+
+    return (
       <Card title={title} extra={extra}>
-        <Table bordered 
-          dataSource={parentId==='0' ? categorys: subCategorys} 
-          columns={this.columns} 
+        <Table bordered
+          dataSource={parentId === '0' ? categorys : subCategorys}
+          columns={this.columns}
           loading={loading}
           rowKey="_id"
-          pagination={{defaultPageSize:5}}
+          pagination={{ defaultPageSize: 5 }}
         ></Table>
+        <Modal
+          title="添加分类"
+          viaible={showState === 1}
+          onOk={this.addCategory}
+          onCancel={this.handleCancel}>
+          11111
+        </Modal>
+        <Modal
+          title="更新分类"
+          viaible={showState === 2}
+          onOk={this.updateCategory}
+          onCancel={this.handleCancel}>
+          222222222
+        </Modal>
       </Card>
     )
   }
