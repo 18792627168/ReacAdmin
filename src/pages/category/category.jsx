@@ -134,7 +134,7 @@ export default class Category extends Component {
         this.getCategorys()
       }
     }
-    // 执行异步任务：发送请求
+    // // 执行异步任务：发送请求
     componentDidMount() {
       this.initColumns()
       this.getCategorys()
@@ -176,7 +176,7 @@ export default class Category extends Component {
             visible={showStatus === 1}
             onOk={this.addCategory}
             onCancel={this.handleCancel}>
-            <AddForm />
+            <AddForm categorys={ca} />
           </Modal>
 
           <Modal
@@ -190,3 +190,4 @@ export default class Category extends Component {
       )
     }
   }
+}

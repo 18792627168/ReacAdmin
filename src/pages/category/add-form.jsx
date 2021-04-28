@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types'
 import {
     Form,
     Select,
@@ -11,6 +12,12 @@ const Opriot = Select.Option
 
 // 添加分类的form组件
 class AddForm extends Component {
+
+    static propTypes = {
+        categorys: PropTypes.array.isRequired,  // 一级分类的数组
+        parentId: PropTypes.array.isRequired,   // 父id
+    }
+
     render() {
         const
         return (
