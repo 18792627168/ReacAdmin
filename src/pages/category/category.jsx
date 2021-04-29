@@ -44,6 +44,7 @@ export default class Category extends Component {
     ];
   }
   // 发送请求 一/二级分类
+  // parentId:如果没有指定根据状态中的parentId请求，如果指定了就根据指定的请求
   getCategorys = async (parentId) => {
     // 在发请求前显示loading
     this.setState({ loading: true });
@@ -114,27 +115,50 @@ export default class Category extends Component {
       })
     }
     // 添加分类
-    addCategory = () => {
-      console.log("1111")
-    }
-    // 更新分类
-    updateCategory = async () => {
+    addCategory = async () => {
       this.setState({
         showStatus: 0
       })
-      // 准备数据
-      const categoryId = this.category._id
-      const categoryName = this.category.categoryName
-
+      // 收集数据并提交添加分类请求（这个是教程内的东西）
+      const { parentId, categoryName } = this.form.getFieldsValue()
       // 清除输入数据
       this.form.resetFields()
 
-      const result = await reqUpdateCategory({ categoryId, categoryName })
-      if (result.statue === 0) {
-        this.getCategorys()
+      const result = await reqAddCategory({ categoryName, parentId })
+      if (result.status === 0) {
+        // 重新获取分类列表显示
+        if (parentId === this.state.parentId) {  // 在添加就是当前分类的情况下再查询列表
+          this.getCategorys()
+        } else if (parentId === '0') { //在二级分类列表下添加一级分类，重新获取一级分类列表，但不需要显示
+          this.getCategorys('0')
+          // ths.setState({ parentId: '0' }, () => { this.getCategorys() })
+        }
       }
     }
-    // // 执行异步任务：发送请求
+    // 更新分类
+    updateCategory = async () => {
+      // 表单验证通过才处理
+      this.form.validateFields((err, values) => {
+        if (!err) {
+          this.setState({
+            showStatus: 0
+          })
+          // 准备数据
+          const categoryId = this.category._id
+          const { categoryName } = values
+
+          // 清除输入数据
+          this.form.resetFields()
+
+          const result = await reqUpdateCategory({ categoryId, categoryName })
+          if (result.statue === 0) {
+            this.getCategorys()
+          }
+        }
+      })
+
+    }
+    // 执行异步任务发送请求
     componentDidMount() {
       this.initColumns()
       this.getCategorys()
@@ -171,12 +195,16 @@ export default class Category extends Component {
             pagination={{ defaultPageSize: 5 }}
           ></Table>
 
+          {/* 这边用于添加分类 */}
           <Modal
             title="添加分类"
             visible={showStatus === 1}
             onOk={this.addCategory}
             onCancel={this.handleCancel}>
-            <AddForm categorys={ca} />
+            <AddForm
+              categorys={categorys}
+              parentId={parentId}
+              setForm={(form) => { this.form = form }} />
           </Modal>
 
           <Modal
@@ -184,7 +212,9 @@ export default class Category extends Component {
             visible={showStatus === 2}
             onOk={this.updateCategory}
             onCancel={this.handleCancel}>
-            <UpdateForm categoryName={category.name} setForm={(form) => { form }} />
+            <UpdateForm
+              categoryName={category.name}
+              setForm={(form) => { this.form = form }} />
           </Modal>
         </Card>
       )
