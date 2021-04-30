@@ -115,30 +115,35 @@ export default class Category extends Component {
       })
     }
     // 添加分类
-    addCategory = async () => {
-      this.setState({
-        showStatus: 0
-      })
-      // 收集数据并提交添加分类请求（这个是教程内的东西）
-      const { parentId, categoryName } = this.form.getFieldsValue()
-      // 清除输入数据
-      this.form.resetFields()
+    addCategory = () => {
+      this.form.validateFields(async (err, values) => {
+        if (!err) {
+          this.setState({
+            showStatus: 0
+          })
+          // 收集数据并提交添加分类请求（这个是教程内的东西）
+          // const { parentId, categoryName } = this.form.getFieldsValue()
+          const { parentId, categoryName } = values
+          // 清除输入数据
+          this.form.resetFields()
 
-      const result = await reqAddCategory({ categoryName, parentId })
-      if (result.status === 0) {
-        // 重新获取分类列表显示
-        if (parentId === this.state.parentId) {  // 在添加就是当前分类的情况下再查询列表
-          this.getCategorys()
-        } else if (parentId === '0') { //在二级分类列表下添加一级分类，重新获取一级分类列表，但不需要显示
-          this.getCategorys('0')
-          // ths.setState({ parentId: '0' }, () => { this.getCategorys() })
+          const result = await reqAddCategory({ categoryName, parentId })
+          if (result.status === 0) {
+            // 重新获取分类列表显示
+            if (parentId === this.state.parentId) {  // 在添加就是当前分类的情况下再查询列表
+              this.getCategorys()
+            } else if (parentId === '0') { //在二级分类列表下添加一级分类，重新获取一级分类列表，但不需要显示
+              this.getCategorys('0')
+              // ths.setState({ parentId: '0' }, () => { this.getCategorys() })
+            }
+          }
         }
-      }
+      })
     }
     // 更新分类
-    updateCategory = async () => {
+    updateCategory = () => {
       // 表单验证通过才处理
-      this.form.validateFields((err, values) => {
+      this.form.validateFields(async (err, values) => {
         if (!err) {
           this.setState({
             showStatus: 0
